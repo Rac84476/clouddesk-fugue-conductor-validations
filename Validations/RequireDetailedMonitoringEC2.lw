@@ -1,0 +1,8 @@
+import Fugue.AWS.EC2 as EC2
+
+validate requireDetailedMonitoringEC2
+
+fun requireDetailedMonitoringEC2(instance: EC2.Instance) -> Validation:
+  case instance.(EC2.Instance).monitoring of
+    | Optional True -> Validation.success
+    | _             -> Validation.failure("Detailed Monitoring is required for all EC2 Instances")

@@ -1,0 +1,57 @@
+export
+  disablePort
+  validateIfEnabled
+  validateUnlessDisabled
+  uniques
+
+import Fugue.AWS.EC2 as EC2
+
+fun disablePort {
+    port: Int,
+    protocol: String
+} -> fun(EC2.SecurityGroup) -> Validation:
+    fun(securityGroup):
+        case securityGroup.(EC2.SecurityGroup).ipPermissions of
+          | None           -> Validation.success
+          | Optional rules ->
+                if List.any(allowsPort(port, protocol), rules) then
+                  let errorMsg: Template.render {
+                    template: "Inbound access to {{port}}/{{proto}} is not allowed.",
+                    data: {
+                      port: port,
+                      proto: protocol,
+                    },
+                  }
+                  Validation.failure(errorMsg)
+                else
+                  Validation.success
+
+fun allowsPort(port: Int, protocol: String) -> (fun(EC2.IpPermission) -> Bool):
+  fun(rule):
+    let ruleProto: rule.(EC2.IpPermission).ipProtocol
+    if ruleProto == "-1" then True
+    elif ruleProto != protocol then False
+    else
+      let fromPort: rule.(EC2.IpPermission).fromPort
+      let toPort: rule.(EC2.IpPermission).toPort
+      (fromPort <= port) && (toPort >= port)
+
+fun validateIfEnabled(var: String, v: Validation) -> Validation:
+    case String.getEnv(var) of
+    | Optional "True" -> v
+    | _               -> Validation.success
+
+fun validateUnlessDisabled(var: String, v: Validation) -> Validation:
+    case String.getEnv(var) of
+    | Optional "False" -> Validation.success
+    | _                -> v
+
+# Turn a list into a set
+fun uniques(xs0: List<a>) -> List<a>:
+    let fun go(set: List<a>, xs: List<a>) -> List<a>:
+            case List.uncons(xs) of
+                | None              -> set
+                | Optional (x, xs1) ->
+                    if List.any(fun(y): y == x, set) then go(set, xs1)
+                    else go(List.cons(x, set), xs1)
+    go([], xs0)

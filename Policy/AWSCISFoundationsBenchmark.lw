@@ -1,0 +1,6 @@
+## Enforce recommended best practices
+
+import Validations.RequireDetailedMonitoringASG
+import Validations.RequireDetailedMonitoringEC2
+import Validations.RequireMultiAZForRDS
+import Validations.RequireMultiAZForSubnets

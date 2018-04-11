@@ -1,0 +1,17 @@
+import Fugue.AWS.EC2 as EC2
+import Fugue.AWS as AWS
+import Validations.Util as Util
+
+validate requireMultiAZForSubnets
+
+fun requireMultiAZForSubnets(ns: NodeStream.NodeStream) -> Validation:
+  # Get the list of all Subnets in the composition.
+  let List<NodeStream.Node<EC2.Subnet>> nodes: NodeStream.unsafeGetNodesByTag(ns, "Fugue.Core.AWS.EC2.Subnet")
+  # Get the list of AZs
+  let List<AWS.AvailabilityZone> azs: List.dropNones [node.value.(EC2.Subnet).availabilityZone for node in nodes]
+  let uniqueAzs: Util.uniques(azs)
+  let numazs: List.length(uniqueAzs)
+  if numazs == 0 || numazs >= 2 then
+      Validation.success
+  else
+      Validation.failure("MultiAZ is required for all VPC Subnets")

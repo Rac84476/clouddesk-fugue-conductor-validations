@@ -1,0 +1,8 @@
+import Fugue.AWS.AutoScaling as AutoScaling
+
+validate requireDetailedMonitoringASG
+
+fun requireDetailedMonitoringASG(lc: AutoScaling.LaunchConfiguration) -> Validation:
+  case lc.(AutoScaling.LaunchConfiguration).instanceMonitoring of
+    | Optional True -> Validation.success
+    | _             -> Validation.failure("Detailed Monitoring is required for all AutoScaleGroup Launch Configs")

@@ -1,0 +1,8 @@
+import Fugue.AWS.RDS as RDS
+
+validate requireMultiAZForRDS
+
+fun requireMultiAZForRDS(dbInstance: RDS.DBInstance) -> Validation:
+  case dbInstance.(RDS.DBInstance).multiAZ of
+    | Optional False -> Validation.failure("MultiAZ is required for all RDS Instances")
+    | _ -> Validation.success

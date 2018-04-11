@@ -23,16 +23,16 @@ node {
             sh(script: "lwc Policy/AWSCISFoundationsBenchmark.lw")
           }
 
-          /* Apply policy to the Fugue Conductor */
-          /* TO DO: Write validation-remove output to file and check for error */
-          stage("Apply Policy") {
-            def cmdStatusCode = sh(script: "fugue policy validation-remove AWSCISBenchmarks -y", returnStatus: true)
-            if(cmdStatusCode == 0) {
-              sh(script: "fugue policy validation-add Policy/AWSCISFoundationsBenchmark.lw --name AWSCISBenchmarks")
-            } else {
-              sh(script: "fugue policy validation-add Policy/AWSCISFoundationsBenchmark.lw --name AWSCISBenchmarks")
-            }
+          /* Snapshot the policy */
+          stage("Snapshot Policy") {
+            sh(script: "lwc -s snapshot Policy/AWSCISFoundationsBenchmark.lw -o AWSCISFoundationsBenchmark.tar.gz")
           }
+
+          /* Publish the policy */
+          stage("Publish Policy") {
+            sh(script: "curl -h")
+          }
+
         }
       }
     }

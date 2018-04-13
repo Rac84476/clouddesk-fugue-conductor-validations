@@ -31,12 +31,12 @@ node {
           /* Publish the policy */
           stage("Publish Policy") {
             sh '''
-              set +x
-              TOKEN=$(curl -s -X POST "https://$EWC_DNSNAME/oidc/token" \
+              /* set +x */
+              TOKEN=$(curl -s -X POST https://$EWC_DNSNAME/oidc/token \
                 -H "content-type: application/x-www-form-urlencoded" \
                 --data "username=$EWC_USER_NAME&password=$EWC_USER_PASS&client_id=fugue_enterprise_web_console&grant_type=password" \
-                | jq -r .access_token )
-              curl -s -X POST "https://$EWC_DNSNAME/validations?name=AWSCISFoundationsBenchmark" \
+                | jq -r .access_token)
+              curl -s -X POST https://$EWC_DNSNAME/validations?name=AWSCISFoundationsBenchmark \
                 -H "accept: application/json" \
                 -H "authorization: Bearer $TOKEN" \
                 -F "snapshot=@AWSCISFoundationsBenchmark.tar.gz"

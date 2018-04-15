@@ -32,7 +32,9 @@ node {
           stage("Publish Policy") {
             sh '''
               /* set +x */
-              TOKEN=$(curl -s -X POST https://$EWC_DNSNAME/oidc/token \
+              whoami
+              ls -la 
+              TOKEN=$(curl -s -X POST "https://$EWC_DNSNAME/oidc/token" \
                 -H "content-type: application/x-www-form-urlencoded" \
                 --data "username=$EWC_USER_NAME&password=$EWC_USER_PASS&client_id=fugue_enterprise_web_console&grant_type=password" \
                 | jq -r .access_token)

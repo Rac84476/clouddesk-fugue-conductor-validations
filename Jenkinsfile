@@ -5,14 +5,14 @@ pipeline {
     FUGUE_RBAC_DO_AS = "true"
     FUGUE_LWC_OPTIONS = "true"
     AWS_DEFAULT_REGION = "us-east-1"
-    EWC_DNSNAME = "ewc-api.fugue.cloud"
+    EWC_DNSNAME = "ewc-api.blazinstyle.com"
     EWC_USER_NAME = credentials("EWC_USER_NAME")
     EWC_USER_PASS = credentials("EWC_USER_PASS")
   }
   agent {
     docker {
-      image "225195660222.dkr.ecr.us-east-1.amazonaws.com/fugue/client:latest"
-      registryUrl "https://225195660222.dkr.ecr.us-east-1.amazonaws.com/fugue/client"
+      image "065965358249.dkr.ecr.us-east-1.amazonaws.com/fugue/client:latest"
+      registryUrl "https://065965358249.dkr.ecr.us-east-1.amazonaws.com/fugue/client"
       registryCredentialsId "ecr:us-east-1:ECS_REPO"
     }
   }
